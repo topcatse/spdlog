@@ -45,16 +45,15 @@ namespace details
 class file_helper
 {
 public:
-    const int open_tries = 5;
-    const int open_interval = 10;
+    const int open_tries;
+    const int open_interval;
 
     explicit file_helper(bool auto_flush):
+        open_tries(5),
+        open_interval(10),
         _fd(nullptr),
         _auto_flush(auto_flush)
     {}
-
-    file_helper(const file_helper&) = delete;
-    file_helper& operator=(const file_helper&) = delete;
 
     ~file_helper()
     {
@@ -129,6 +128,9 @@ public:
     }
 
 private:
+    file_helper(const file_helper&);
+    file_helper& operator=(const file_helper&);
+
     FILE* _fd;
     std::string _filename;
     bool _auto_flush;

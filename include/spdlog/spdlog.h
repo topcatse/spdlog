@@ -49,7 +49,7 @@ std::shared_ptr<logger> get(const std::string& name);
 // e.g. spdlog::set_pattern("%Y-%m-%d %H:%M:%S.%e %l : %v");
 //
 void set_pattern(const std::string& format_string);
-void set_formatter(formatter_ptr f);
+void set_formatter(std::shared_ptr<spdlog::formatter> f);
 
 //
 // Set global logging level
@@ -99,16 +99,10 @@ std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std:
 //
 // Create a logger with multiple sinks
 //
-std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks);
 
 template<class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
-
-// Create a logger with templated sink type
-// Example: spdlog::create<daily_file_sink_st>("mylog", "dailylog_filename", "txt");
-template <typename Sink, typename... Args>
-std::shared_ptr<spdlog::logger> create(const std::string& logger_name, const Args&...);
 
 //
 // Trace & debug macros to be switched on/off at compile time for zero cost debug statements.

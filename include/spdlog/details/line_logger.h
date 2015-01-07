@@ -44,12 +44,6 @@ public:
         _enabled(enabled)
     {}
 
-    // No copy intended. Only move
-    line_logger(const line_logger& other) = delete;
-    line_logger& operator=(const line_logger&) = delete;
-    line_logger& operator=(line_logger&&) = delete;
-
-
     line_logger(line_logger&& other) :
         _callback_logger(other._callback_logger),
         _log_msg(std::move(other._log_msg)),
@@ -64,24 +58,8 @@ public:
         if (_enabled)
         {
             _log_msg.logger_name = _callback_logger->name();
-            _log_msg.time = log_clock::now();
+            _log_msg.time = std::chrono::system_clock::now();
             _callback_logger->_log_msg(_log_msg);
-        }
-    }
-
-
-    template <typename... Args>
-    void write(const char* fmt, const Args&... args)
-    {
-        if (!_enabled)
-            return;
-        try
-        {
-            _log_msg.raw.write(fmt, args...);
-        }
-        catch (const fmt::FormatError& e)
-        {
-            throw spdlog_ex(fmt::format("formatting error while processing format string '{}': {}", fmt, e.what()));
         }
     }
 
@@ -102,6 +80,11 @@ public:
 
 
 private:
+    // No copy intended. Only move
+    line_logger(const line_logger& other);
+    line_logger& operator=(const line_logger&);
+    line_logger& operator=(line_logger&&);
+
     logger* _callback_logger;
     log_msg _log_msg;
     bool _enabled;

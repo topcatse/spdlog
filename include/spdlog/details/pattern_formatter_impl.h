@@ -84,7 +84,7 @@ static int to12h(const tm& t)
 }
 
 //Abbreviated weekday name
-static const std::string days[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+static const std::string days[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 class a_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
@@ -94,7 +94,7 @@ class a_formatter :public flag_formatter
 };
 
 //Full weekday name
-static const std::string full_days[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+static const std::string full_days[] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 class A_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
@@ -104,7 +104,7 @@ class A_formatter :public flag_formatter
 };
 
 //Abbreviated month
-static const std::string  months[] { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
+static const std::string  months[] = { "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
 class b_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
@@ -114,7 +114,7 @@ class b_formatter :public flag_formatter
 };
 
 //Full month name
-static const std::string full_months[] { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+static const std::string full_months[] = { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 class B_formatter :public flag_formatter
 {
     void format(details::log_msg& msg, const std::tm& tm_time) override
@@ -298,11 +298,10 @@ class T_formatter :public flag_formatter
 class z_formatter :public flag_formatter
 {
 public:
-    const std::chrono::seconds cache_refresh = std::chrono::seconds(5);
+    const std::chrono::seconds cache_refresh;
 
-    z_formatter() :_last_update(std::chrono::seconds(0)) {}
-    z_formatter(const z_formatter&) = delete;
-    z_formatter& operator=(const z_formatter&) = delete;
+    z_formatter() :_last_update(std::chrono::seconds(0))
+                  ,cache_refresh(std::chrono::seconds(5))  {}
 
     void format(details::log_msg& msg, const std::tm& tm_time) override
     {
@@ -321,7 +320,10 @@ public:
         pad_n_join(msg.formatted, h, m, ':');
     }
 private:
-    log_clock::time_point _last_update;
+    z_formatter(const z_formatter&);
+    z_formatter& operator=(const z_formatter&);
+
+    std::chrono::system_clock::time_point _last_update;
     int _offset_minutes;
     std::mutex _mutex;
 
@@ -589,7 +591,7 @@ inline void spdlog::pattern_formatter::format(details::log_msg& msg)
 {
     try
     {
-        auto tm_time = details::os::localtime(log_clock::to_time_t(msg.time));
+        auto tm_time = details::os::localtime(std::chrono::system_clock::to_time_t(msg.time));
         for (auto &f : _formatters)
         {
             f->format(msg, tm_time);

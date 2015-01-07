@@ -24,7 +24,6 @@
 
 #pragma once
 
-#include<initializer_list>
 #include<chrono>
 
 //visual studio does not support noexcept yet
@@ -44,12 +43,6 @@ namespace sinks
 class sink;
 }
 
-// Common types across the lib
-using log_clock = std::chrono::system_clock;
-using sink_ptr = std::shared_ptr < sinks::sink > ;
-using sinks_init_list = std::initializer_list < sink_ptr > ;
-using formatter_ptr = std::shared_ptr<spdlog::formatter>;
-
 //Log level enum
 namespace level
 {
@@ -67,7 +60,7 @@ typedef enum
     off      = 9
 } level_enum;
 
-static const char* level_names[] { "trace", "debug", "info", "notice", "warning", "error", "critical", "alert", "emerg", "off"};
+static const char* level_names[] = { "trace", "debug", "info", "notice", "warning", "error", "critical", "alert", "emerg", "off"};
 
 inline const char* to_str(spdlog::level::level_enum l)
 {

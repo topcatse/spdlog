@@ -57,14 +57,11 @@ class async_log_helper
     {
         std::string logger_name;
         level::level_enum level;
-        log_clock::time_point time;
+        std::chrono::system_clock::time_point time;
         std::string txt;
 
-        async_msg() = default;
-        ~async_msg() = default;
-
-        async_msg(const async_msg&) = delete;
-        async_msg& operator=(async_msg& other) = delete;
+        async_msg() {}
+        ~async_msg() {}
 
         async_msg(const details::log_msg& m) :
             logger_name(m.logger_name),
@@ -98,26 +95,30 @@ class async_log_helper
             msg.time = time;
             msg.raw << txt;
         }
+
+    private:
+        async_msg(const async_msg&);
+        async_msg& operator=(async_msg& other);
     };
 
 public:
 
-    using item_type = async_msg;
-    using q_type = details::mpmc_bounded_queue<item_type>;
+    typedef async_msg                              item_type;
+    typedef details::mpmc_bounded_queue<item_type> q_type;
 
-    using clock = std::chrono::steady_clock;
+    typedef std::chrono::steady_clock              clock;
 
 
-    async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size);
+    async_log_helper(std::shared_ptr<spdlog::formatter> formatter, const std::vector<std::shared_ptr < sinks::sink >>& sinks, size_t queue_size);
     void log(const details::log_msg& msg);
 
     //Stop logging and join the back thread
     ~async_log_helper();
-    void set_formatter(formatter_ptr);
+    void set_formatter(std::shared_ptr<spdlog::formatter>);
 
 
 private:
-    formatter_ptr _formatter;
+    std::shared_ptr<spdlog::formatter> _formatter;
     std::vector<std::shared_ptr<sinks::sink>> _sinks;
     q_type _q;
     std::thread _worker_thread;
@@ -146,7 +147,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 // async_sink class implementation
 ///////////////////////////////////////////////////////////////////////////////
-inline spdlog::details::async_log_helper::async_log_helper(formatter_ptr formatter, const std::vector<sink_ptr>& sinks, size_t queue_size):
+inline spdlog::details::async_log_helper::async_log_helper(std::shared_ptr<spdlog::formatter> formatter, const std::vector<std::shared_ptr < sinks::sink >>& sinks, size_t queue_size):
     _formatter(formatter),
     _sinks(sinks),
     _q(queue_size),
@@ -229,7 +230,7 @@ inline bool spdlog::details::async_log_helper::process_next_msg(clock::time_poin
     return true;
 }
 
-inline void spdlog::details::async_log_helper::set_formatter(formatter_ptr msg_formatter)
+inline void spdlog::details::async_log_helper::set_formatter(std::shared_ptr<spdlog::formatter> msg_formatter)
 {
     _formatter = msg_formatter;
 }

@@ -47,10 +47,7 @@ class base_sink:public sink
 {
 public:
     base_sink():_mutex() {}
-    virtual ~base_sink() = default;
-
-    base_sink(const base_sink&) = delete;
-    base_sink& operator=(const base_sink&) = delete;
+    virtual ~base_sink() {}
 
     void log(const details::log_msg& msg) override
     {
@@ -62,6 +59,10 @@ public:
 protected:
     virtual void _sink_it(const details::log_msg& msg) = 0;
     Mutex _mutex;
+
+private:
+    base_sink(const base_sink&);
+    base_sink& operator=(const base_sink&);
 };
 }
 }

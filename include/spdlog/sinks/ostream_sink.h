@@ -40,9 +40,7 @@ class ostream_sink: public base_sink<Mutex>
 {
 public:
     explicit ostream_sink(std::ostream& os) :_ostream(os) {}
-    ostream_sink(const ostream_sink&) = delete;
-    ostream_sink& operator=(const ostream_sink&) = delete;
-    virtual ~ostream_sink() = default;
+    virtual ~ostream_sink() {}
 
 protected:
     virtual void _sink_it(const details::log_msg& msg) override
@@ -50,6 +48,10 @@ protected:
         _ostream.write(msg.formatted.data(), msg.formatted.size());
     }
     std::ostream& _ostream;
+
+private:
+    ostream_sink(const ostream_sink&);
+    ostream_sink& operator=(const ostream_sink&);
 };
 
 typedef ostream_sink<std::mutex> ostream_sink_mt;

@@ -33,7 +33,8 @@ namespace details
 {
 struct log_msg
 {
-    log_msg() = default;
+    log_msg() {}
+
     log_msg(level::level_enum l):
         logger_name(),
         level(l),
@@ -86,7 +87,7 @@ struct log_msg
 
     std::string logger_name;
     level::level_enum level;
-    log_clock::time_point time;
+    std::chrono::system_clock::time_point time;
     fmt::MemoryWriter raw;
     fmt::MemoryWriter formatted;
 };

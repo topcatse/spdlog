@@ -74,7 +74,7 @@ class mpmc_bounded_queue
 {
 public:
 
-    using item_type = T;
+    typedef T item_type;
     mpmc_bounded_queue(size_t buffer_size)
         : buffer_(new cell_t [buffer_size]),
           buffer_mask_(buffer_size - 1)

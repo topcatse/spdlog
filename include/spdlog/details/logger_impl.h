@@ -43,20 +43,21 @@ inline spdlog::logger::logger(const std::string& logger_name, const It& begin, c
     _level = level::info;
 }
 
-// ctor with sinks as init list
-inline spdlog::logger::logger(const std::string& logger_name, sinks_init_list sinks_list) :
-    logger(logger_name, sinks_list.begin(), sinks_list.end()) {}
-
-
 // ctor with single sink
-inline spdlog::logger::logger(const std::string& logger_name, spdlog::sink_ptr single_sink) :
-    logger(logger_name, { single_sink }) {}
+inline spdlog::logger::logger(const std::string& logger_name, std::shared_ptr < sinks::sink > single_sink) :
+    _name(logger_name),
+    _sinks(1, single_sink),
+    _formatter(std::make_shared<pattern_formatter>("%+"))
+{
+
+    // no support under vs2013 for member initialization for std::atomic
+    _level = level::info;
+}
+
+inline spdlog::logger::~logger() {}
 
 
-inline spdlog::logger::~logger() = default;
-
-
-inline void spdlog::logger::set_formatter(spdlog::formatter_ptr msg_formatter)
+inline void spdlog::logger::set_formatter(std::shared_ptr<spdlog::formatter> msg_formatter)
 {
     _set_formatter(msg_formatter);
 }
@@ -71,76 +72,9 @@ inline void spdlog::logger::set_pattern(const std::string& pattern)
 //
 
 
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level_enum lvl, const char* fmt, const Args&... args)
-{
-    bool msg_enabled = should_log(lvl);
-    details::line_logger l(this, lvl, msg_enabled);
-    l.write(fmt, args...);
-    return l;
-}
-
 inline spdlog::details::line_logger spdlog::logger::_log_if_enabled(level::level_enum lvl)
 {
     return details::line_logger(this, lvl, should_log(lvl));
-}
-
-
-//
-// following functions will log only if at the right level
-//
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::trace(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::trace, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::debug(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::debug, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::info(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::info, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::notice(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::notice, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::warn(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::warn, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::error(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::err, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::critical(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::critical, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::alert(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::alert, fmt, args...);
-}
-
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::emerg(const char* fmt, const Args&... args)
-{
-    return _log_if_enabled(level::emerg, fmt, args...);
 }
 
 
@@ -197,15 +131,6 @@ inline spdlog::details::line_logger spdlog::logger::emerg()
 }
 
 
-// always log, no matter what is the actual logger's log level
-template <typename... Args>
-inline spdlog::details::line_logger spdlog::logger::force_log(level::level_enum lvl, const char* fmt, const Args&... args)
-{
-    details::line_logger l(this, lvl, true);
-    l.write(fmt, args...);
-    return l;
-}
-
 //
 // name and level
 //
@@ -243,7 +168,7 @@ inline void spdlog::logger::_set_pattern(const std::string& pattern)
 {
     _formatter = std::make_shared<pattern_formatter>(pattern);
 }
-inline void spdlog::logger::_set_formatter(formatter_ptr msg_formatter)
+inline void spdlog::logger::_set_formatter(std::shared_ptr<spdlog::formatter> msg_formatter)
 {
     _formatter = msg_formatter;
 }

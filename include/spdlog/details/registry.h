@@ -83,18 +83,15 @@ public:
         std::lock_guard<std::mutex> lock(_mutex);
         _loggers.clear();
     }
-    std::shared_ptr<logger> create(const std::string& logger_name, sinks_init_list sinks)
-    {
-        return create(logger_name, sinks.begin(), sinks.end());
-    }
 
-    std::shared_ptr<logger> create(const std::string& logger_name, sink_ptr sink)
+    std::shared_ptr<logger> create(const std::string& logger_name, std::shared_ptr < sinks::sink > sink)
     {
-        return create(logger_name, { sink });
+        std::vector<std::shared_ptr < sinks::sink >> oneSink(1, sink);
+        return create(logger_name, oneSink.begin(), oneSink.end());
     }
 
 
-    void formatter(formatter_ptr f)
+    void formatter(std::shared_ptr<spdlog::formatter> f)
     {
         std::lock_guard<std::mutex> lock(_mutex);
         _formatter = f;
@@ -140,15 +137,15 @@ public:
     }
 
 private:
-    registry() = default;
-    registry(const registry&) = delete;
-    registry& operator=(const registry&) = delete;
+    registry() : _level(level::info), _async_mode(false), _async_q_size(0) {}
+    registry(const registry&);
+    registry& operator=(const registry&);
     std::mutex _mutex;
     std::unordered_map <std::string, std::shared_ptr<logger>> _loggers;
-    formatter_ptr _formatter;
-    level::level_enum _level = level::info;
-    bool _async_mode = false;
-    size_t _async_q_size = 0;
+    std::shared_ptr<spdlog::formatter> _formatter;
+    level::level_enum _level;
+    bool _async_mode;
+    size_t _async_q_size;
 };
 }
 }

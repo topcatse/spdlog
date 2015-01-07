@@ -40,14 +40,14 @@ inline spdlog::async_logger::async_logger(const std::string& logger_name, const 
 {
 }
 
-inline spdlog::async_logger::async_logger(const std::string& logger_name, sinks_init_list sinks, size_t queue_size) :
-    async_logger(logger_name, sinks.begin(), sinks.end(), queue_size) {}
+inline spdlog::async_logger::async_logger(const std::string& logger_name, std::shared_ptr < sinks::sink > single_sink, size_t queue_size) :
+    logger(logger_name, single_sink),
+    _async_log_helper(new details::async_log_helper(_formatter, _sinks, queue_size))
+{
+}
 
-inline spdlog::async_logger::async_logger(const std::string& logger_name, sink_ptr single_sink, size_t queue_size) :
-    async_logger(logger_name, { single_sink }, queue_size) {}
 
-
-inline void spdlog::async_logger::_set_formatter(spdlog::formatter_ptr msg_formatter)
+inline void spdlog::async_logger::_set_formatter(std::shared_ptr<spdlog::formatter> msg_formatter)
 {
     _formatter = msg_formatter;
     _async_log_helper->set_formatter(_formatter);
