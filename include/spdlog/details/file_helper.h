@@ -48,11 +48,11 @@ public:
     const int open_tries;
     const int open_interval;
 
-    explicit file_helper(bool auto_flush):
+    explicit file_helper(bool force_flush):
         open_tries(5),
         open_interval(10),
         _fd(nullptr),
-        _auto_flush(auto_flush)
+        _force_flush(force_flush)
     {}
 
     ~file_helper()
@@ -103,7 +103,7 @@ public:
         if(std::fwrite(data, 1, size, _fd) != size)
             throw spdlog_ex("Failed writing to file " + _filename);
 
-        if(_auto_flush)
+        if(_force_flush)
             std::fflush(_fd);
 
     }
@@ -133,7 +133,7 @@ private:
 
     FILE* _fd;
     std::string _filename;
-    bool _auto_flush;
+    bool _force_flush;
 
 
 };

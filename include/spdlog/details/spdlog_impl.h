@@ -43,27 +43,27 @@ inline void spdlog::drop(const std::string &name)
 }
 
 // Create multi/single threaded rotating file logger
-inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool auto_flush)
+inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_mt(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush)
 {
-    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(filename, "txt", max_file_size, max_files, auto_flush);
+    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(filename, "txt", max_file_size, max_files, force_flush);
     return details::registry::instance().create(logger_name, sink);
 }
 
-inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool auto_flush)
+inline std::shared_ptr<spdlog::logger> spdlog::rotating_logger_st(const std::string& logger_name, const std::string& filename, size_t max_file_size, size_t max_files, bool force_flush)
 {
-    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(filename, "txt", max_file_size, max_files, auto_flush);
+    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::rotating_file_sink_st>(filename, "txt", max_file_size, max_files, force_flush);
     return details::registry::instance().create(logger_name, sink);
 }
 
 // Create file logger which creates new file at midnight):
-inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_mt(const std::string& logger_name, const std::string& filename, bool auto_flush)
+inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_mt(const std::string& logger_name, const std::string& filename, bool force_flush)
 {
-    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>(filename, "txt", auto_flush);
+    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::daily_file_sink_mt>(filename, "txt", force_flush);
     return details::registry::instance().create(logger_name, sink);
 }
-inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string& logger_name, const std::string& filename, bool auto_flush)
+inline std::shared_ptr<spdlog::logger> spdlog::daily_logger_st(const std::string& logger_name, const std::string& filename, bool force_flush)
 {
-    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::daily_file_sink_st>(filename, "txt", auto_flush);
+    std::shared_ptr < sinks::sink > sink = std::make_shared<spdlog::sinks::daily_file_sink_st>(filename, "txt", force_flush);
     return details::registry::instance().create(logger_name, sink);
 }
 

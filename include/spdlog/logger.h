@@ -60,7 +60,19 @@ public:
     const std::string& name() const;
     bool should_log(level::level_enum) const;
 
-    //API to support logger.info() << ".." call  style
+    // logger.info(msg) << ".." call style
+    template <typename T> details::line_logger trace(const T&);
+    template <typename T> details::line_logger debug(const T&);
+    template <typename T> details::line_logger info(const T&);
+    template <typename T> details::line_logger notice(const T&);
+    template <typename T> details::line_logger warn(const T&);
+    template <typename T> details::line_logger error(const T&);
+    template <typename T> details::line_logger critical(const T&);
+    template <typename T> details::line_logger alert(const T&);
+    template <typename T> details::line_logger emerg(const T&);
+
+
+    // logger.info() << ".." call  style
     details::line_logger trace();
     details::line_logger debug();
     details::line_logger info();
@@ -81,6 +93,8 @@ protected:
     virtual void _set_pattern(const std::string&);
     virtual void _set_formatter(std::shared_ptr<spdlog::formatter>);
     details::line_logger _log_if_enabled(level::level_enum lvl);
+    template<typename T>
+    inline details::line_logger _log_if_enabled(level::level_enum lvl, const T& msg);
 
     friend details::line_logger;
     std::string _name;
