@@ -115,6 +115,7 @@ public:
     void set_level(level::level_enum log_level)
     {
         std::lock_guard<std::mutex> lock(_mutex);
+		_level = log_level;
         for (auto& l : _loggers)
             l.second->set_level(log_level);
     }
