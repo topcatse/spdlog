@@ -56,6 +56,12 @@ inline spdlog::logger::logger(const std::string& logger_name, std::shared_ptr < 
 
 inline spdlog::logger::~logger() {}
 
+void spdlog::logger::add(std::shared_ptr < sinks::sink > single_sink)
+{
+    auto found = std::find(std::begin(_sinks), std::end(_sinks), single_sink);
+    if (found == _sinks.end())
+        _sinks.push_back(single_sink);
+}
 
 inline void spdlog::logger::set_formatter(std::shared_ptr<spdlog::formatter> msg_formatter)
 {

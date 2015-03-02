@@ -90,6 +90,17 @@ public:
         return create(logger_name, oneSink.begin(), oneSink.end());
     }
 
+    std::shared_ptr<logger> add(const std::string& logger_name, std::shared_ptr < sinks::sink > sink)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        // If not found, create one the normal way and return it
+        auto found = _loggers.find(logger_name);
+        if (found == _loggers.end())
+            return create(logger_name, sink);
+        std::shared_ptr<logger> current_logger(found->second);
+        current_logger->add(sink);
+        return current_logger;
+    }
 
     void formatter(std::shared_ptr<spdlog::formatter> f)
     {

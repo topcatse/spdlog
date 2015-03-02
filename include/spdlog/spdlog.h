@@ -105,6 +105,13 @@ std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_b
 
 
 //
+// Add a sink to a logger.
+//
+
+template<class It>
+std::shared_ptr<logger> add(const std::string& logger_name, std::shared_ptr< sinks::sink > sink);
+
+//
 // Trace & debug macros to be switched on/off at compile time for zero cost debug statements.
 // Note: using these mactors overrides the runtime log threshold of the logger.
 //

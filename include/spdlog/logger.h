@@ -54,6 +54,8 @@ public:
 
     virtual ~logger();
 
+    void add(std::shared_ptr < sinks::sink > single_sink);
+
     void set_level(level::level_enum);
     level::level_enum level() const;
 

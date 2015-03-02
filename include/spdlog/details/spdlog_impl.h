@@ -110,6 +110,16 @@ inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_
     return details::registry::instance().create(logger_name, sinks_begin, sinks_end);
 }
 
+//
+// Create a logger with multiple sinks
+//
+
+template<class It>
+std::shared_ptr<logger> create(const std::string& logger_name, std::shared_ptr< sinks::sink > sink)
+{
+    return details::registry::instance().add(logger_name, sink);
+}
+
 inline void spdlog::set_formatter(std::shared_ptr<spdlog::formatter> f)
 {
     details::registry::instance().formatter(f);
