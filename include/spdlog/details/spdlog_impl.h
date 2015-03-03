@@ -100,7 +100,7 @@ inline std::shared_ptr<spdlog::logger> spdlog::syslog_logger(const std::string& 
     return create<spdlog::sinks::syslog_sink>(logger_name, syslog_ident, syslog_option);
 }
 #endif
-
+    
 
 //Create logger with multiple sinks
 
@@ -111,11 +111,9 @@ inline std::shared_ptr<spdlog::logger> spdlog::create(const std::string& logger_
 }
 
 //
-// Create a logger with multiple sinks
+// Add sink to logger
 //
-
-template<class It>
-std::shared_ptr<logger> create(const std::string& logger_name, std::shared_ptr< sinks::sink > sink)
+inline std::shared_ptr<spdlog::logger> spdlog::add(const std::string& logger_name, std::shared_ptr< spdlog::sinks::sink > sink)
 {
     return details::registry::instance().add(logger_name, sink);
 }

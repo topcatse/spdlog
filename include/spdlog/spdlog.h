@@ -103,13 +103,10 @@ std::shared_ptr<logger> syslog_logger(const std::string& logger_name, const std:
 template<class It>
 std::shared_ptr<logger> create(const std::string& logger_name, const It& sinks_begin, const It& sinks_end);
 
-
 //
-// Add a sink to a logger.
+// Add sink to logger
 //
-
-template<class It>
-std::shared_ptr<logger> add(const std::string& logger_name, std::shared_ptr< sinks::sink > sink);
+std::shared_ptr<spdlog::logger> add(const std::string& logger_name, std::shared_ptr< spdlog::sinks::sink > sink);
 
 //
 // Trace & debug macros to be switched on/off at compile time for zero cost debug statements.
