@@ -1,10 +1,14 @@
+//
+// Copyright(c) 2015 Gabi Melman.
+// Distributed under the MIT License (http://opensource.org/licenses/MIT)
+//
 
 #include <thread>
 #include <vector>
 #include <atomic>
 #include <iostream>
 #include <chrono>
-
+#include <cstdlib>
 #include "spdlog/spdlog.h"
 
 using namespace std;
@@ -18,7 +22,7 @@ int main(int argc, char* argv[])
 
     int thread_count = 10;
     if(argc > 1)
-        thread_count = atoi(argv[1]);
+        thread_count = ::atoi(argv[1]);
     int howmany = 1000000;
 
     spd::set_async_mode(1048576);
@@ -37,7 +41,7 @@ int main(int argc, char* argv[])
             {
                 int counter = ++msg_counter;
                 if (counter > howmany) break;
-                logger->info() << "spdlog message #" << counter << ": This is some text for your pleasure";
+                logger->info("spdlog message #{}: This is some text for your pleasure", counter);
             }
         }));
     }
